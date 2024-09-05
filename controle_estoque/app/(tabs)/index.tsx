@@ -28,11 +28,27 @@ export default function HomeScreen() {
     loadProducts();
   }, []);
 
+  const validateProduct = (product) => {
+    return (
+      typeof product.name === 'string' &&
+      typeof product.value === 'number' &&
+      typeof product.quantity === 'number' &&
+      product.name.trim() !== '' &&
+      !isNaN(product.value) &&
+      !isNaN(product.quantity)
+    );
+  };
+
   const saveProducts = async (productsToSave: any[]) => {
     try {
-      await AsyncStorage.setItem('products', JSON.stringify(productsToSave));
+      if (productsToSave.every(validateProduct)) {
+        await AsyncStorage.setItem('products', JSON.stringify(productsToSave));
+      } else {
+        Alert.alert('Erro', 'Produtos inválidos. Verifique os dados e tente novamente.');
+      }
     } catch (error) {
       console.error('Erro ao salvar produtos', error);
+      Alert.alert('Erro', 'Não foi possível salvar os produtos.');
     }
   };
 
@@ -248,5 +264,3 @@ const styles = StyleSheet.create({
     marginHorizontal: 8,
   },
 });
-
-//
